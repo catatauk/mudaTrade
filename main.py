@@ -159,6 +159,7 @@ def analisar_trocas(data: dict) -> dict:
 # ============================================
 def exibir_resultados(analise: dict):
     """Exibe os resultados formatados"""
+    mlist: str = ""
     print("=" * 70)
     print("🎯 PERSONAGEM ALVO (O QUE VOCÊ DÁ):")
     print(f"  {analise['alvo']}")
@@ -176,7 +177,8 @@ def exibir_resultados(analise: dict):
         print(f"\n  Você RECEBE ({len(melhor['recebido'])} personagens):")
         for p in melhor['recebido']:
             print(f"    • {p}")
-
+            mlist += f"{p.nome} $ "
+        print(f"\n    >> {mlist[:-2]}")
         print(f"\n  📊 RESUMO:")
         print(f"    Kakera dado: {melhor['kakera_dado']:,} ka")
         print(f"    Kakera recebido: {melhor['kakera_recebido']:,} ka")
