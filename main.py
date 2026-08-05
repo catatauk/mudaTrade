@@ -2,7 +2,7 @@ import json
 from itertools import combinations
 
 import hintTyps as ht
-from parser import PersonegemParser, ProcessadorLista
+from parser import DadosProcessados, PersonegemParser, ProcessadorLista
 
 
 # ============================================
@@ -84,28 +84,26 @@ def encontrar_melhor_troca(personagem_alvo: ht.Personagem, lista_trocas: list[ht
 # ============================================
 # CARREGAR E ANALISAR JSON
 # ============================================
-def carregar_json(mudae_file: str) -> ht.DadosJSON:
-    json = ProcessadorLista(PersonegemParser()).converterLista(mudae_file)
-    return json
+def carregar_json(mudae_file: str) -> DadosProcessados:
+    data = ProcessadorLista(PersonegemParser()).converterLista(mudae_file)
+    return data
 
-def analisar_trocas(data: ht.DadosJSON) -> ht.ResultadoAnalise:
+def analisar_trocas(data: DadosProcessados) -> ht.ResultadoAnalise:
     # Cria personagem alvo
-    alvo_data = data['personagem_alvo']
+    alvo_data = data.personagem_alvo
     alvo = ht.Personagem(
-        rank = alvo_data['rank'],
-        nome=alvo_data['nome'],
-        kakera=alvo_data['kakera'],
-        extra=alvo_data.get('extra', '')
+        rank = alvo_data.rank,
+        nome=alvo_data.nome,
+        kakera=alvo_data.kakera
     )
 
     # Cria lista de trocas
     trocas: list[ht.Personagem] = []
-    for p in data['trocas_disponiveis']:
+    for p in data.trocas_disponiveis:
         trocas.append(ht.Personagem(
-            rank=p['rank'],
-            nome=p['nome'],
-            kakera=p['kakera'],
-            extra=p.get('extra', '')
+            rank=p.rank,
+            nome=p.nome,
+            kakera=p.kakera
         ))
 
     # Analisa

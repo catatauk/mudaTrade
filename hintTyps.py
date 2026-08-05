@@ -14,6 +14,13 @@ class Personagem:
             return f"#{self.rank} - {self.nome} | {self.extra} · {self.kakera:,} ka"
         return f"#{self.rank} - {self.nome} · {self.kakera:,} ka"
 
+    def to_dict(self) -> dict[str, int | str]:
+        return {
+            "rank": self.rank,
+            "nome": self.nome,
+            "kakera": self.kakera
+        }
+
 # =============================================
 # TIPAGENS
 # ============================================
