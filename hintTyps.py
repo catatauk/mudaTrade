@@ -23,18 +23,7 @@ class Personagem:
 
 # =============================================
 # TIPAGENS
-# ============================================
-class PersonagemJSON(TypedDict):
-    rank: int
-    nome: str
-    kakera: int
-
-class ConfiguracoesJSON(TypedDict):
-    max_personagens_por_troca: int
-
-class DadosJSON(TypedDict):
-    personagem_alvo: PersonagemJSON
-    trocas_disponiveis: list[PersonagemJSON]
+# =============================================
 
 class MelhorTroca(TypedDict):
     dado: Personagem

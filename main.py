@@ -1,26 +1,26 @@
 import json
 from itertools import combinations
 
-import hintTyps as ht
+from hintTyps import MelhorTroca, Personagem, ResultadoAnalise
 from parser import DadosProcessados, PersonegemParser, ProcessadorLista
 
 
 # ============================================
 # REGRAS
 # ============================================
-def eh_top_200(personagem: ht.Personagem) -> bool:
+def eh_top_200(personagem: Personagem) -> bool:
     return personagem.rank <= 200
 
 def rank_valido(rank1: int, rank2: int) -> bool:
     if rank1 > 4000 and rank2 > 4000:
         return True
 
-    melhor_rank = min(rank1, rank2)
-    pior_rank = max(rank1, rank2)
+    melhor_rank: int = min(rank1, rank2)
+    pior_rank: int = max(rank1, rank2)
 
     if melhor_rank <= 200:
         if melhor_rank <= 100:
-            limite = 200
+            limite: int = 200
         else:
             limite = melhor_rank * 2
         return pior_rank <= limite
@@ -31,37 +31,37 @@ def rank_valido(rank1: int, rank2: int) -> bool:
     return False
 
 def valor_valido(kakera1: int, kakera2: int) -> bool:
-    mais_caro = max(kakera1, kakera2)
-    menos_caro = min(kakera1, kakera2)
+    mais_caro: int = max(kakera1, kakera2)
+    menos_caro: int = min(kakera1, kakera2)
 
-    diferenca = mais_caro - menos_caro
-    limite = min(mais_caro * 0.4, 5000)
+    diferenca: int = mais_caro - menos_caro
+    limite:float = min(mais_caro * 0.4, 5000)
 
     return diferenca <= limite
 
-def pode_trocar(item1: ht.Personagem, item2: ht.Personagem) -> bool:
+def pode_trocar(item1: Personagem, item2: Personagem) -> bool:
     return valor_valido(item1.kakera, item2.kakera) and rank_valido(item1.rank, item2.rank)
 
 # ============================================
 # FUNÇÕES AUXILIARES
 # ============================================
-def soma_kakera(personagens: list[ht.Personagem]) -> int:
+def soma_kakera(personagens: list[Personagem]) -> int:
     return sum(p.kakera for p in personagens)
 
-def count_top200(personagens: list[ht.Personagem]) -> int:
+def count_top200(personagens: list[Personagem]) -> int:
     return sum(1 for p in personagens if eh_top_200(p))
 
 # ============================================
 # FUNÇÃO PRINCIPAL DE ANÁLISE
 # ============================================
-def encontrar_melhor_troca(personagem_alvo: ht.Personagem, lista_trocas: list[ht.Personagem]) -> tuple[list[ht.Personagem], ht.Personagem] | None:
-    melhores_resultados:list[tuple[list[ht.Personagem],ht.Personagem]] = []
+def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Personagem]) -> tuple[list[Personagem], Personagem] | None:
+    melhores_resultados:list[tuple[list[Personagem],Personagem]] = []
 
-    lista_trocas_filtrada = [p for p in lista_trocas if p.rank != personagem_alvo.rank]
+    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.rank != personagem_alvo.rank]
 
     for n in range(1, min(5, len(lista_trocas_filtrada) + 1)):
         for combo in combinations(lista_trocas_filtrada, n):
-            lista_multiplos: list[ht.Personagem] = list(combo)
+            lista_multiplos: list[Personagem] = list(combo)
 
             if count_top200(lista_multiplos) > 1:
                 continue
@@ -69,7 +69,7 @@ def encontrar_melhor_troca(personagem_alvo: ht.Personagem, lista_trocas: list[ht
             if not any(rank_valido(personagem_alvo.rank, p.rank) for p in lista_multiplos):
                 continue
 
-            kakera_multiplos = soma_kakera(lista_multiplos)
+            kakera_multiplos: int = soma_kakera(lista_multiplos)
             if not valor_valido(kakera_multiplos, personagem_alvo.kakera):
                 continue
 
@@ -85,33 +85,33 @@ def encontrar_melhor_troca(personagem_alvo: ht.Personagem, lista_trocas: list[ht
 # CARREGAR E ANALISAR JSON
 # ============================================
 def carregar_json(mudae_file: str) -> DadosProcessados:
-    data = ProcessadorLista(PersonegemParser()).converterLista(mudae_file)
-    return data
+    return ProcessadorLista(PersonegemParser()).converterLista(mudae_file)
 
-def analisar_trocas(data: DadosProcessados) -> ht.ResultadoAnalise:
+
+def analisar_trocas(data: DadosProcessados) -> ResultadoAnalise:
     # Cria personagem alvo
-    alvo_data = data.personagem_alvo
-    alvo = ht.Personagem(
+    alvo_data: Personagem = data.personagem_alvo
+    alvo:Personagem = Personagem(
         rank = alvo_data.rank,
         nome=alvo_data.nome,
         kakera=alvo_data.kakera
     )
 
     # Cria lista de trocas
-    trocas: list[ht.Personagem] = []
+    trocas: list[Personagem] = []
     for p in data.trocas_disponiveis:
-        trocas.append(ht.Personagem(
+        trocas.append(Personagem(
             rank=p.rank,
             nome=p.nome,
             kakera=p.kakera
         ))
 
     # Analisa
-    resultado = encontrar_melhor_troca(alvo, trocas)
+    resultado: tuple[list[Personagem], Personagem] | None = encontrar_melhor_troca(alvo, trocas)
 
     if resultado:
         multiplos, dado = resultado
-        kakera_recebido = soma_kakera(multiplos)
+        kakera_recebido: int = soma_kakera(multiplos)
 
         return {
             'alvo': alvo,
@@ -136,7 +136,7 @@ def analisar_trocas(data: DadosProcessados) -> ht.ResultadoAnalise:
 # ============================================
 # EXIBIR RESULTADOS
 # ============================================
-def exibir_resultados(analise: ht.ResultadoAnalise):
+def exibir_resultados(analise: ResultadoAnalise):
     mlist: str = ""
     print("=" * 70)
     print("🎯 PERSONAGEM ALVO (O QUE VOCÊ DÁ):")
@@ -146,7 +146,7 @@ def exibir_resultados(analise: ht.ResultadoAnalise):
     print(f"📊 Total de trocas analisadas: {analise['total_trocas']}")
 
     if analise['melhor_troca']:
-        melhor = analise['melhor_troca']
+        melhor: MelhorTroca = analise['melhor_troca']
 
         print("\n✅ MELHOR TROCA ENCONTRADA:")
         print("\n  Você DÁ (1 personagem):")
@@ -179,16 +179,16 @@ def exibir_resultados(analise: ht.ResultadoAnalise):
 def main():
     try:
         # Carrega o JSON
-        data = carregar_json("mudae.txt")
+        data: DadosProcessados = carregar_json("mudae.txt")
 
         # Analisa as trocas
-        analise = analisar_trocas(data)
+        analise: ResultadoAnalise = analisar_trocas(data)
 
         # Exibe os resultados
         exibir_resultados(analise)
 
     except FileNotFoundError as e:
-        print(f"❌ ERRO: {e}")
+        print(f"❌ ERRO: Arquivo não encontrado: {e}")
     except KeyError as e:
         print(f"❌ ERRO: Campo obrigatório faltando no JSON: {e}")
     except json.JSONDecodeError as e:
