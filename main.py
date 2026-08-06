@@ -1,7 +1,8 @@
 import json
 from itertools import combinations
+from pathlib import Path
 
-from hintTyps import MelhorTroca, Personagem, ResultadoAnalise
+from objetos import LoadConfig, MelhorTroca, Personagem, ResultadoAnalise
 from parser import DadosProcessados, PersonegemParser, ProcessadorLista
 
 
@@ -56,8 +57,8 @@ def count_top200(personagens: list[Personagem]) -> int:
 # ============================================
 def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Personagem]) -> tuple[list[Personagem], Personagem] | None:
     melhores_resultados:list[tuple[list[Personagem],Personagem]] = []
-
-    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.rank != personagem_alvo.rank]
+    lista_exclusao: list[str] = LoadConfig.from_toml(Path("config.toml")).disable_list.waifus
+    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.nome not in lista_exclusao]
 
     for n in range(1, min(5, len(lista_trocas_filtrada) + 1)):
         for combo in combinations(lista_trocas_filtrada, n):

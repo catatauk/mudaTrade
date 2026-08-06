@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 
-from hintTyps import Personagem
+from objetos import Personagem
 
 
 @dataclass
