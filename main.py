@@ -52,13 +52,16 @@ def soma_kakera(personagens: list[Personagem]) -> int:
 def count_top200(personagens: list[Personagem]) -> int:
     return sum(1 for p in personagens if eh_top_200(p))
 
+def load_config() -> LoadConfig:
+    return LoadConfig.from_toml(Path("config.toml"))
+
 # ============================================
 # FUNÇÃO PRINCIPAL DE ANÁLISE
 # ============================================
 def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Personagem]) -> tuple[list[Personagem], Personagem] | None:
     melhores_resultados:list[tuple[list[Personagem],Personagem]] = []
-    lista_exclusao: list[str] = LoadConfig.from_toml(Path("config.toml")).disable_list.waifus
-    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.nome not in lista_exclusao]
+    lista_exclusao: list[str] = load_config().disable_list.waifus
+    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.nome not in lista_exclusao and p.kakera <= personagem_alvo.kakera * 1.4]
 
     for n in range(1, min(5, len(lista_trocas_filtrada) + 1)):
         for combo in combinations(lista_trocas_filtrada, n):
@@ -75,6 +78,7 @@ def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Perso
                 continue
 
             melhores_resultados.append((lista_multiplos, personagem_alvo))
+            break
 
     if not melhores_resultados:
         return None
