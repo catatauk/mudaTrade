@@ -17,7 +17,7 @@ class DadosProcessados:
         }
 
 class PersonegemParser:
-    PRADRAO_LINHA: re.Pattern[str] = re.compile(r"^#([0-9]+) - (.+) ([0-9]+) ka")
+    PRADRAO_LINHA: re.Pattern[str] = re.compile(r"^#(\d+) - ([^|]+?)(?: \|? [^ |]+ )?(\d+) ka")
 
     @classmethod
     def parse(cls, linha: str) -> Personagem | None:
