@@ -1,4 +1,13 @@
-[disable_list]
-waifus = [
+[user_conf]
+# diferença maxima de kakera entre as trocas
+# quanto menos mais dificil
+# limite maximo até 5000
+kakera_gap = 1000
 
-]
+# tempo maximo que o programa ficara calculando as trocas
+time_out = 5
+
+[disable_list]
+# liste todos os personagens a serem desconsiderados nas trocas
+# exempo de uso: waifus = ["sakura", "bambietta basterbine", "goku"]
+waifus = []

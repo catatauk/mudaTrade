@@ -12,22 +12,23 @@ class DadosProcessados:
     def to_dict(self) -> dict[str, dict[str, int | str] | list[dict[str, int | str]]]:
         return {
             "personagem_alvo": self.personagem_alvo.to_dict(),
-            "trocas_disponiveis": [p.to_dict() for p in self.trocas_disponiveis]
-
+            "trocas_disponiveis": [p.to_dict() for p in self.trocas_disponiveis],
         }
 
+
 class PersonegemParser:
-    PRADRAO_LINHA: re.Pattern[str] = re.compile(r"^#(\d+) - ([^|]+?)(?: \|? [^ |]+ )?(\d+) ka")
+    PRADRAO_LINHA: re.Pattern[str] = re.compile(
+        r"^#(\d+) - ([^|]+?)(?: \|? [^ |]+ )?(\d+) ka"
+    )
 
     @classmethod
     def parse(cls, linha: str) -> Personagem | None:
         if not (match := cls.PRADRAO_LINHA.search(linha.strip())):
             return None
         return Personagem(
-            rank=int(match.group(1)),
-            nome=match.group(2),
-            kakera=int(match.group(3))
+            rank=int(match.group(1)), nome=match.group(2), kakera=int(match.group(3))
         )
+
 
 class ProcessadorLista:
     def __init__(self, parser: PersonegemParser) -> None:
@@ -44,7 +45,11 @@ class ProcessadorLista:
         if not alvo:
             raise ValueError("Primeira linha invalida.")
 
-        trocas: list[Personagem] = [personagem for linha in linhas[1:] if (personagem := self.parser.parse(linha))]
+        trocas: list[Personagem] = [
+            personagem
+            for linha in linhas[1:]
+            if (personagem := self.parser.parse(linha))
+        ]
 
         return DadosProcessados(alvo, trocas)
 
