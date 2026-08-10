@@ -52,11 +52,8 @@ def valor_valido(kakera1: int, kakera2: int) -> bool:
 
     return diferenca <= limite
 
-
-def pode_trocar(item1: Personagem, item2: Personagem) -> bool:
-    return valor_valido(item1.kakera, item2.kakera) and rank_valido(
-        item1.rank, item2.rank
-    )
+def validar_individual(alvo: Personagem, item: Personagem) -> bool:
+    return (item.rank > 4000 or item.rank > alvo.rank and item.kakera < min(alvo.kakera * 1.4, alvo.kakera + 5000))
 
 
 # ============================================
@@ -79,7 +76,8 @@ def encontrar_melhor_troca(
     primeiro_resultado: list[tuple[list[Personagem], Personagem]] = []
     lista_exclusao: list[str] = load_config().disable_list.waifus
     lista_trocas_filtrada: list[Personagem] = [
-        p for p in lista_trocas if p.nome not in lista_exclusao
+        p for p in lista_trocas if p.nome not in lista_exclusao and
+        validar_individual(alvo=personagem_alvo, item=p)
     ]
     time_out: float = load_config().user_config.time_out
     time_start: float = time()
@@ -92,11 +90,6 @@ def encontrar_melhor_troca(
                 return None
 
             if count_top200(lista_multiplos) > 1:
-                continue
-
-            if not any(
-                rank_valido(personagem_alvo.rank, p.rank) for p in lista_multiplos
-            ):
                 continue
 
             kakera_multiplos: int = soma_kakera(lista_multiplos)
@@ -113,9 +106,9 @@ def encontrar_melhor_troca(
 
 
 # ============================================
-# CARREGAR E ANALISAR JSON
+# CARREGAR E ANALISAR DADOS
 # ============================================
-def carregar_json(mudae_file: str) -> DadosProcessados:
+def carregar_dados(mudae_file: str) -> DadosProcessados:
     return ProcessadorLista(PersonegemParser()).converterLista(mudae_file)
 
 
@@ -203,8 +196,8 @@ def exibir_resultados(analise: ResultadoAnalise):
 # ============================================
 def main():
     try:
-        # Carrega o JSON
-        data: DadosProcessados = carregar_json("mudae.txt")
+        # Carrega dados brutos
+        data: DadosProcessados = carregar_dados("mudae.txt")
 
         # Analisa as trocas
         analise: ResultadoAnalise = analisar_trocas(data)
@@ -215,7 +208,7 @@ def main():
     except FileNotFoundError as e:
         print(f"❌ ERRO: Arquivo não encontrado: {e}")
     except KeyError as e:
-        print(f"❌ ERRO: Campo obrigatório faltando no JSON: {e}")
+        print(f"❌ ERRO: Campo obrigatório faltando: {e}")
     except tomllib.TOMLDecodeError as e:
         print(f"❌ ERRO: Error no arquivo config: {e}")
 
