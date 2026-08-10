@@ -59,9 +59,9 @@ def load_config() -> LoadConfig:
 # FUNÇÃO PRINCIPAL DE ANÁLISE
 # ============================================
 def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Personagem]) -> tuple[list[Personagem], Personagem] | None:
-    melhores_resultados:list[tuple[list[Personagem],Personagem]] = []
+    primeiro_resultado:list[tuple[list[Personagem],Personagem]] = []
     lista_exclusao: list[str] = load_config().disable_list.waifus
-    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.nome not in lista_exclusao and p.kakera <= personagem_alvo.kakera * 1.4]
+    lista_trocas_filtrada: list[Personagem] = [p for p in lista_trocas if p.nome not in lista_exclusao]
 
     for n in range(1, min(5, len(lista_trocas_filtrada) + 1)):
         for combo in combinations(lista_trocas_filtrada, n):
@@ -77,14 +77,14 @@ def encontrar_melhor_troca(personagem_alvo: Personagem, lista_trocas: list[Perso
             if not valor_valido(kakera_multiplos, personagem_alvo.kakera):
                 continue
 
-            melhores_resultados.append((lista_multiplos, personagem_alvo))
-            break
+            return (lista_multiplos, personagem_alvo)
 
-    if not melhores_resultados:
+
+    if not primeiro_resultado:
         return None
 
-    melhores_resultados.sort(key=lambda x: abs(soma_kakera(x[0]) - x[1].kakera))
-    return melhores_resultados[0]
+    primeiro_resultado.sort(key=lambda x: abs(soma_kakera(x[0]) - x[1].kakera))
+    return primeiro_resultado[0]
 
 # ============================================
 # CARREGAR E ANALISAR JSON
