@@ -53,7 +53,15 @@ def valor_valido(kakera1: int, kakera2: int) -> bool:
     return diferenca <= limite
 
 def validar_individual(alvo: Personagem, item: Personagem) -> bool:
-    return (item.rank > 4000 or item.rank > alvo.rank and item.kakera < min(alvo.kakera * 1.4, alvo.kakera + 5000))
+    #return (item.rank > 4000 or item.rank > alvo.rank and item.kakera < min(alvo.kakera * 1.4, alvo.kakera + 5000))
+    if item.kakera < min(alvo.kakera * 1.4, alvo.kakera + 5000):
+        if item.rank > 4000 or item.rank > alvo.rank:
+            return True
+        else:
+            return rank_valido(rank1=alvo.rank, rank2=item.rank)
+    else:
+        return False
+
 
 
 # ============================================
