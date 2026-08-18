@@ -100,6 +100,9 @@ def encontrar_melhor_troca(
             if count_top200(lista_multiplos) > 1:
                 continue
 
+            if not any(rank_valido(rank1=personagem_alvo.rank, rank2=p.rank) for p in lista_multiplos):
+                continue
+
             kakera_multiplos: int = soma_kakera(lista_multiplos)
             if not valor_valido(kakera_multiplos, personagem_alvo.kakera):
                 continue
