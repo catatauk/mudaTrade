@@ -109,9 +109,6 @@ def encontrar_melhor_troca(
 
             return (lista_multiplos, personagem_alvo)
 
-    if not primeiro_resultado:
-        return None
-
     primeiro_resultado.sort(key=lambda x: abs(soma_kakera(x[0]) - x[1].kakera))
     return primeiro_resultado[0]
 

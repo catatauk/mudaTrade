@@ -26,7 +26,7 @@ class PersonegemParser:
         if not (match := cls.PRADRAO_LINHA.search(linha.strip())):
             return None
         return Personagem(
-            rank=int(match.group(1)), nome=match.group(2), kakera=int(match.group(3))
+            rank=int(match.group(1)), nome=match.group(2).strip(), kakera=int(match.group(3))
         )
 
 
